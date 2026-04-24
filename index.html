@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Telju Fitness Benelux B.V.</title>
+<style>
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#edf0f4;min-height:100vh;font-size:15px;color:#222}
+
+/* ── LAYOUT ── */
+#app{max-width:960px;margin:0 auto;padding:14px}
+
+/* ── HEADER ── */
+#hdr{background:#fff;border-radius:12px;padding:14px 18px;margin-bottom:12px;
+     display:flex;align-items:center;gap:14px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+#hdrLogo{height:48px;object-fit:contain}
+#hdrLogoTxt{background:#1a3a5c;color:#fff;padding:6px 14px;border-radius:6px;
+            font-weight:900;font-size:16px;letter-spacing:1px}
+#hdrTitle{font-size:16px;font-weight:700;color:#1a3a5c}
+#hdrSub{font-size:12px;color:#888;margin-top:2px}
+#cartBadge{margin-left:auto;background:#1a3a5c;color:#fff;border-radius:20px;
+           padding:5px 14px;font-size:12px;font-weight:700;display:none}
+
+/* ── TABS ── */
+#tabs{display:flex;background:#fff;border-radius:12px;padding:6px;gap:4px;
+      margin-bottom:12px;box-shadow:0 1px 6px rgba(0,0,0,.05);overflow-x:auto}
+.tab{flex:1;min-width:55px;padding:9px 4px;border:none;border-radius:8px;
+     background:none;font-size:13px;font-weight:500;color:#888;cursor:pointer;
+     text-align:center;white-space:nowrap;font-family:Arial,sans-serif;transition:all .15s}
+.tab.on{background:#1a3a5c;color:#fff}
+
+/* ── CARD ── */
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:12px;
+      box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.card h2{font-size:15px;font-weight:700;color:#1a3a5c;margin-bottom:14px}
+.card h3{font-size:14px;font-weight:700;color:#1a3a5c;margin-bottom:10px}
+.hint{font-size:13px;color:#777;margin-bottom:10px}
+
+/* ── FORM ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.g2{grid-template-columns:1fr}}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.4px}
+.fld input,.fld select,.fld textarea{
+  padding:10px 12px;border:1.5px solid #dde2e8;border-radius:8px;
+  font-size:14px;font-family:Arial,sans-serif;color:#222;background:#fff;width:100%}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:#1a3a5c}
+.fld textarea{resize:vertical;min-height:80px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;
+     padding:11px 22px;border-radius:8px;font-size:14px;font-weight:700;
+     cursor:pointer;border:none;font-family:Arial,sans-serif;gap:6px}
+.btn-navy{background:#1a3a5c;color:#fff}
+.btn-sec{background:#fff;border:1.5px solid #dde2e8;color:#444}
+.btn-green{background:#27ae60;color:#fff}
+.btn-sm{padding:5px 11px;font-size:12px;border-radius:6px;border:none;
+        cursor:pointer;font-weight:700;font-family:Arial,sans-serif}
+.btn-sm-navy{background:#1a3a5c;color:#fff}
+.btn-sm-gold{background:#c8a020;color:#fff}
+
+/* ── SEARCH BAR ── */
+.sbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.sbar input,.sbar select{flex:1;min-width:120px;padding:9px 12px;
+  border:1.5px solid #dde2e8;border-radius:8px;font-size:13px;font-family:Arial,sans-serif}
+.hltog{display:flex;align-items:center;gap:6px;padding:8px 12px;
+       border:1.5px solid #dde2e8;border-radius:8px;font-size:12px;
+       font-weight:700;cursor:pointer;background:#fff;white-space:nowrap;user-select:none}
+.hltog.on{border-color:#c8a020;background:#fffbee;color:#7a5800}
+
+/* ── PRODUCT LIST ── */
+#prodList{max-height:400px;overflow-y:auto;border:1px solid #e8ecf0;border-radius:10px}
+.prow{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #f2f2f2}
+.prow:last-child{border-bottom:none}
+.prow:active{background:#f5f8ff}
+.pname{font-size:13px;font-weight:700;line-height:1.3}
+.pmeta{font-size:11px;color:#888;margin-top:2px}
+.pprice{font-size:13px;font-weight:700;min-width:68px;text-align:right;flex-shrink:0}
+.pbtns{display:flex;gap:5px;flex-shrink:0}
+.badge{display:inline-block;padding:1px 5px;border-radius:3px;
+       font-size:9px;font-weight:700;letter-spacing:.4px;margin-left:4px;vertical-align:middle}
+.badge-hl{background:#c8a020;color:#fff}
+.badge-nv{background:#1a3a5c;color:#fff}
+
+/* ── CART ── */
+.crow{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #f2f2f2}
+.crow:last-child{border-bottom:none}
+.cinfo{flex:1;min-width:0}
+.cname{font-size:13px;font-weight:700}
+.cref{font-size:11px;color:#888}
+.qrow{display:flex;align-items:center;gap:4px}
+.qbtn{width:28px;height:28px;border:1.5px solid #dde2e8;border-radius:6px;
+      background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;
+      justify-content:center;font-weight:700;line-height:1}
+.qinp{width:40px;text-align:center;padding:4px;border:1.5px solid #dde2e8;
+      border-radius:6px;font-size:14px;font-weight:700}
+.mklbl{display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;white-space:nowrap}
+.ctotal{min-width:76px;text-align:right;font-size:14px;font-weight:700}
+.delbtn{background:none;border:none;color:#ccc;cursor:pointer;font-size:20px;padding:0 2px;line-height:1}
+
+/* ── SUMMARY SIDEBAR ── */
+.twocol{display:grid;grid-template-columns:1fr 280px;gap:12px}
+@media(max-width:700px){.twocol{grid-template-columns:1fr}}
+.sticky{position:sticky;top:14px}
+.srow{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;
+      color:#666;border-bottom:1px solid #f5f5f5}
+.srow.bold{font-weight:700;color:#222;font-size:14px;border-bottom:none}
+.srow.red{color:#c0392b;font-weight:700}
+.srow.sep{border-top:1.5px solid #dde2e8;padding-top:8px;margin-top:4px;border-bottom:none}
+.stotal{background:#1a3a5c;color:#fff;border-radius:8px;padding:11px 14px;
+        display:flex;justify-content:space-between;font-size:15px;font-weight:700;margin-top:8px}
+.sgreen{background:#e8f5e9;border-radius:6px;padding:7px 10px;font-size:12px;color:#2e7d32;margin-top:7px}
+.sdsc{background:#f4f7fa;border-radius:6px;padding:7px 10px;font-size:11px;color:#555;line-height:1.8;margin-top:7px}
+
+/* ── SEARCH FEEDBACK ── */
+.fb{font-size:13px;margin-top:7px;padding:6px 10px;border-radius:6px}
+.fb-ok{background:#e8f5e9;color:#2e7d32}
+.fb-err{background:#fdecea;color:#c0392b}
+
+/* ── OFFERTE (print view) ── */
+
+
+/* ── OFFERTE DOCUMENT ── */
+.off{font-family:Arial,sans-serif;font-size:9.5pt;color:#222;background:#fff}
+.off-hdr{display:flex;justify-content:space-between;align-items:flex-start;
+         padding-bottom:10px;border-bottom:3px solid #1a3a5c;margin-bottom:14px}
+.off-logo{height:52px;object-fit:contain}
+.off-co{text-align:right;font-size:8pt;line-height:1.9;color:#444}
+.off-title{background:#1a3a5c;color:#fff;padding:8px 14px;font-size:13pt;
+           font-weight:700;letter-spacing:1px;margin-bottom:12px}
+.off-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.off-mb{background:#f4f7fa;padding:10px 12px;border-left:3px solid #1a3a5c}
+.off-mh{font-size:7.5pt;color:#1a3a5c;text-transform:uppercase;
+        letter-spacing:1px;font-weight:700;margin-bottom:5px}
+.off-mp{font-size:9pt;line-height:1.8}
+.off-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:8.5pt}
+.off-tbl th{background:#1a3a5c;color:#fff;padding:7px 8px;font-weight:700;text-align:left}
+.off-tbl th.r,.off-tbl td.r{text-align:right}
+.off-tbl th.c,.off-tbl td.c{text-align:center}
+.off-tbl td{padding:6px 8px;border-bottom:1px solid #edf0f4}
+.off-tbl tr:nth-child(even) td{background:#f8fafc}
+.off-tots{margin-left:auto;width:270px}
+.off-tots table{width:100%;border-collapse:collapse}
+.off-tots td{padding:3px 7px;font-size:9pt;border:none}
+.ts td{border-top:1px solid #ccc;padding-top:7px}
+.tb td{font-weight:700}
+.tr td{color:#c0392b;font-weight:700}
+.tg td{background:#1a3a5c;color:#fff;font-weight:700;font-size:11pt;
+       padding:9px 7px;border-radius:3px}
+.off-ind{margin-top:12px;background:#fffbf0;border-left:3px solid #c8a020;padding:10px 12px}
+.off-ind-h{font-size:7.5pt;color:#8a6000;font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.off-ind-p{font-size:8.5pt;color:#555;white-space:pre-wrap;line-height:1.7}
+.off-note{margin-top:10px;background:#f4f7fa;border-left:3px solid #1a3a5c;
+          padding:9px 12px;font-size:8.5pt;line-height:1.7;white-space:pre-wrap}
+.off-ft{margin-top:20px;font-size:7pt;color:#888;border-top:1px solid #ddd;
+        padding-top:9px;line-height:1.9}
+
+/* ── PRINT ── */
+@media print {
+  body > div:first-child { display: none !important; }
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+    /* Remove browser auto header/footer (URL, title, page number) */
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  @page :first { margin-top: 10mm; }
+  body { background: white !important; margin: 0; }
+  /* Hide browser-generated headers and footers */
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+/* Tell browser not to add URL/title when printing */
+@page { margin: 10mm; }
+</style>
+</head>
+<body>
+
+<!-- offerte wordt inline getoond -->
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- Header -->
+  <div id="hdr">
+    <img id="hdrLogo" alt="Telju Fitness" onerror="this.style.display='none'">
+    <div id="hdrLogoTxt">TELJU FITNESS</div>
+    <div>
+      <div id="hdrTitle">Offerte Maker</div>
+      <div id="hdrSub">Benelux B.V. &bull; Havenkant 2, 4781AA Moerdijk</div>
+    </div>
+    <div id="cartBadge"></div>
+  </div>
+
+  <!-- Tabs -->
+  <div id="tabs">
+    <button class="tab on" onclick="gT(0)">1. Klant</button>
+    <button class="tab"    onclick="gT(1)">2. Producten</button>
+    <button class="tab"    onclick="gT(2)">3. Selectie</button>
+    <button class="tab"    onclick="gT(3)">4. Kosten</button>
+    <button class="tab"    onclick="gT(4)">5. Offerte</button>
+  </div>
+
+  <!-- TAB 0: KLANT -->
+  <div id="T0">
+    <div class="card">
+      <h2>Klantgegevens</h2>
+      <div class="g2">
+        <div class="fld"><label>Contactpersoon</label><input id="kN" placeholder="Jan de Vries"></div>
+        <div class="fld"><label>Bedrijfsnaam</label><input id="kB" placeholder="Fitness Club BV"></div>
+        <div class="fld"><label>Adres</label><input id="kA" placeholder="Hoofdstraat 1"></div>
+        <div class="fld"><label>Stad / Postcode</label><input id="kS" placeholder="3300 AB Rotterdam"></div>
+        <div class="fld"><label>E-mailadres</label><input id="kE" type="email" placeholder="klant@email.nl"></div>
+        <div class="fld"><label>Offertenummer</label><input id="kR"></div>
+        <div class="fld"><label>Offertedatum</label><input id="kD" type="date"></div>
+        <div class="fld"><label>Geldig tot</label><input id="kG" type="date"></div>
+      </div>
+      <div style="margin-top:16px;text-align:right">
+        <button class="btn btn-navy" onclick="gT(1)">Volgende &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 1: PRODUCTEN -->
+  <div id="T1" style="display:none">
+
+    <!-- API KEY KAART -->
+    <!-- AI ANALYSE KAART -->
+    <div class="card">
+      <h3 style="display:flex;align-items:center;gap:8px">
+        <span style="background:#1a3a5c;color:#fff;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">AI</span>
+        Klantenlijst analyseren
+      </h3>
+      <p class="hint">Plak een lijst van de klant, of upload een foto/screenshot &mdash; Claude selecteert automatisch de juiste apparaten uit de catalogus</p>
+
+      <!-- Tekst invoer -->
+      <div class="fld" style="margin-bottom:10px">
+        <label>Plak de lijst van de klant</label>
+        <textarea id="aiTxt" rows="4"
+          placeholder="Bijv:&#10;- Leg press&#10;- 2x Bicep curl machine&#10;- Dumbell set 5-40kg&#10;- Crosstrainer&#10;&#10;Of gewoon vrije tekst: de klant wil een complete beentraining opzet met cardio..."></textarea>
+      </div>
+
+      <!-- Afbeelding upload -->
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">
+          Of upload een foto / screenshot
+        </label>
+        <label id="imgLbl" style="display:flex;align-items:center;gap:10px;padding:12px 14px;
+               border:2px dashed #dde2e8;border-radius:8px;cursor:pointer;font-size:13px;color:#666;
+               transition:border-color .15s" onmouseover="this.style.borderColor='#1a3a5c'" onmouseout="this.style.borderColor='#dde2e8'">
+          <span style="font-size:22px">📷</span>
+          <span id="imgLblTxt">Tik om foto te kiezen (iPhone camera, screenshot, PDF scan...)</span>
+          <input type="file" id="aiImg" accept="image/*,application/pdf" style="display:none" onchange="onImgSelect(this)">
+        </label>
+        <div id="imgPreview" style="display:none;margin-top:8px;position:relative">
+          <img id="imgThumb" style="max-height:120px;border-radius:6px;border:1px solid #dde2e8">
+          <button onclick="clearImg()" style="position:absolute;top:4px;right:4px;background:#c0392b;color:#fff;
+                  border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:14px;line-height:1">&times;</button>
+        </div>
+      </div>
+
+      <button class="btn btn-navy" onclick="doAIAnalyse()" id="aiBtn"
+              style="width:100%;font-size:15px;padding:13px">
+        &#x2728; Analyseer &amp; Selecteer producten
+      </button>
+      <div id="aiStatus" style="margin-top:8px"></div>
+    </div>
+
+    <!-- HANDMATIG ZOEKEN -->
+    <div class="card">
+      <h3>Handmatig zoeken</h3>
+      <div class="sbar">
+        <input id="srch" placeholder="Zoek op naam of referentie..." oninput="renderProds()">
+        <select id="catF" onchange="renderProds()"><option value="">Alle categorie&#235;n</option></select>
+        <div class="hltog" id="hlTog" onclick="togHL()">
+          <input type="checkbox" id="hlCb" style="pointer-events:none;width:14px;height:14px">
+          Heavy Lifters
+        </div>
+      </div>
+      <div id="prodList"></div>
+    </div>
+  </div>
+    <div class="card">
+      <div class="sbar">
+        <input id="srch" placeholder="Zoek op naam of referentie..." oninput="renderProds()">
+        <select id="catF" onchange="renderProds()"><option value="">Alle categorie&#235;n</option></select>
+        <div class="hltog" id="hlTog" onclick="togHL()">
+          <input type="checkbox" id="hlCb" style="pointer-events:none;width:14px;height:14px">
+          Heavy Lifters
+        </div>
+      </div>
+      <div id="prodList"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: SELECTIE -->
+  <div id="T2" style="display:none">
+    <div class="card">
+      <h2>Geselecteerde producten</h2>
+      <div id="cartList"></div>
+      <p id="cartEmpty" style="color:#888;font-size:14px;padding:6px 0">Nog geen producten &mdash; ga naar stap 2.</p>
+      <div id="cartBtns" style="display:none;justify-content:space-between;margin-top:14px">
+        <button class="btn btn-sec" onclick="gT(1)">&#8592; Meer toevoegen</button>
+        <button class="btn btn-navy" onclick="gT(3)">Volgende: Kosten &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: KOSTEN -->
+  <div id="T3" style="display:none">
+    <div class="twocol">
+      <div>
+        <div class="card">
+          <h3>Transport</h3>
+          <div class="g2">
+            <div class="fld">
+              <label>Aantal palletplekken</label>
+              <input type="number" id="trk" value="1" min="0" max="40" oninput="updateSum()"
+                     style="font-size:18px;font-weight:700">
+            </div>
+            <div class="fld">
+              <label>Transportkosten</label>
+              <div id="trkInfo" style="padding:10px 12px;background:#f4f7fa;border-radius:8px;
+                   font-size:14px;font-weight:700;color:#1a3a5c;border:1.5px solid #dde2e8">
+                &euro; 300,00
+              </div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:#888;margin-top:8px;line-height:1.7;
+                      background:#e3f2fd;border-radius:6px;padding:8px 10px;border-left:3px solid #1a3a5c">
+            <strong>&euro;300 per palletplek</strong> &bull; Vanaf 9 palletplekken (= &euro;2.700) wordt automatisch afgetopt op &euro;2.500 (volle trailer voordeliger)
+          </div>
+          <div class="fld" style="margin-top:10px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;
+                          font-size:13px;font-weight:normal;text-transform:none;letter-spacing:0">
+              <input type="checkbox" id="ins" onchange="updateSum()" style="width:16px;height:16px">
+              Installatie (7,5%, max &euro;6.500 excl. BTW)
+            </label>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Indicatieprijzen</h3>
+          <p class="hint">Worden onderaan de offerte getoond &mdash; tellen niet mee in het totaal</p>
+          <div class="fld">
+            <textarea id="indic" rows="4"
+              placeholder="Camera systeem: ca. &#8364; 3.500&#10;Toegangsbeheer: ca. &#8364; 2.000&#10;Rubbervloer per m&#178;: ca. &#8364; 25"></textarea>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Korting</h3>
+          <div class="g2">
+            <div class="fld">
+              <label>Staffelkorting (automatisch)</label>
+              <div id="staffelInfo" style="padding:10px 12px;background:#f4f7fa;border-radius:8px;
+                   font-size:14px;font-weight:700;color:#1a3a5c;border:1.5px solid #dde2e8">
+                Wordt automatisch berekend
+              </div>
+            </div>
+            <div class="fld">
+              <label>Extra korting % (handmatig)</label>
+              <input type="number" id="extraKort" value="0" min="0" max="100" step="0.5"
+                     oninput="updateSum()" placeholder="0"
+                     style="font-size:18px;font-weight:700;color:#c0392b">
+            </div>
+          </div>
+          <div style="font-size:12px;color:#888;margin-top:8px;line-height:1.7;
+                      background:#fff8e0;border-radius:6px;padding:8px 10px;border-left:3px solid #c8a020">
+            <strong>Staffelkorting:</strong> &lt;&#8364;50K: geen &nbsp;&bull;&nbsp; &#8364;50K&ndash;75K: 5% &nbsp;&bull;&nbsp; &#8364;75K&ndash;125K: 10% &nbsp;&bull;&nbsp; &gt;&#8364;125K: 15%<br>
+            <strong>Extra korting</strong> wordt bovenop de staffelkorting berekend over de apparatuurwaarde na staffelkorting.
+          </div>
+        </div>
+        <div class="card">
+          <h3>Opmerkingen</h3>
+          <div class="fld">
+            <textarea id="opmk" rows="3" placeholder="Levertijd, kleurwensen, speciale voorwaarden..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="sticky">
+        <div class="card">
+          <h3>Prijsoverzicht</h3>
+          <div id="sumRows"></div>
+          <button class="btn btn-navy" style="width:100%;margin-top:14px" onclick="gT(4)">
+            Naar Offerte &#8594;
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: OFFERTE -->
+  <div id="T4" style="display:none">
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <h2 style="margin-bottom:4px">Offerte Preview</h2>
+        <p class="hint" style="margin:0">Klik <strong>Open Offerte</strong> om te bekijken en af te drukken als PDF.<br>Gebruik <strong>Verstuur per e-mail</strong> om direct vanuit je mail-app te versturen.</p>
+      </div>
+      <button class="btn btn-green" style="font-size:15px;padding:13px 28px" onclick="showOff()">
+        &#128424; Open Offerte
+      </button>
+    </div>
+    <div class="card" id="prevCard" style="padding:20px"></div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+var LOGO='data:image/jpeg;base64,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';
+
+var CAT = {
+"PEC MACHINES": [
+  {r:"4SHO001/1",n:"Pectoral Machine 70K",p:4029.30,hl:{s:"140KG",p:4579.30}},
+  {r:"4SHO001/2",n:"Pectoral Machine 100K",p:4312.00},
+  {r:"4SHO002/1",n:"Vertical Chest Press 70K",p:4081.00,hl:{s:"160KG",p:4647.50}},
+  {r:"4SHO002/2",n:"Vertical Chest Press 100K",p:4364.80,hl:{s:"160KG",p:5200}},
+  {r:"4SHO003/0",n:"Multipower (without bench) 60+60K",p:4600.20},
+  {r:"4SHO004/0",n:"Plate Loaded Multipower / Smith Machine",p:2671.90}
+],
+"SHOULDER MACHINES": [
+  {r:"4SHO010/1",n:"Shoulder Press 50K",p:3592.60},
+  {r:"4SHO011/0",n:"Lateral Deltoids 40K",p:3769.70,hl:{s:"80KG",p:4055.70}},
+  {r:"4SHO012/0",n:"Posterior Deltoids 70K",p:3877.50},
+  {r:"4SHO013/0",n:"Pec Fly",p:4133.80,hl:{s:"160KG",p:4700.30}}
+],
+"BACK MACHINES": [
+  {r:"4SHO021/0",n:"Pulley High and Low 100K",p:2718.10},
+  {r:"4SHO022/0",n:"3 Station Pulley 100+100+80K",p:5923.50,hl:{s:"Maatwerk",p:null}},
+  {r:"4SHO023/0",n:"4 Station Pulley 100+100+80+80K",p:6682.50,hl:{s:"Maatwerk",p:null}},
+  {r:"4SHO024/0",n:"Single Pulley Cross Over 80+80K",p:4716.80,hl:{s:"Maatwerk",p:null}},
+  {r:"4SHO020/0",n:"5 Station Pulley Cross Over",p:8543.70,hl:{s:"Zoals pos.",p:12500}},
+  {r:"4SHO025/0",n:"6 Station Pulley Cross Over",p:11765.60,hl:{s:"Maatwerk",p:null}},
+  {r:"4SHO025/1",n:"6 Station Pulley Cross Over (uitgebreid)",p:17758.40,hl:{s:"Zoals pos.",p:22500}},
+  {r:"4SHO026/0",n:"8 Station Pulley Cross Over",p:12964.60,hl:{s:"Maatwerk",p:null}},
+  {r:"4SHO026/1",n:"8 Station Pulley Cross Over (uitgebreid)",p:19456.80,hl:{s:"Maatwerk",p:null}},
+  {r:"4SHO027/1",n:"Seated Row Machine 100K",p:3635.50,hl:{s:"160KG",p:4339.50}},
+  {r:"4SHO028/0",n:"Tip Rowing",p:1972.30},
+  {r:"4SHO029/0",n:"Chin Up / Dipping Machine 80K",p:3573.90},
+  {r:"4SHO030/0",n:"Pullover 160K",p:4790.50},
+  {r:"4SHO032/0",n:"Functional Trainer",p:5139.20}
+],
+"ARM MACHINES": [
+  {r:"4SHO040/1",n:"Triceps 70K",p:3505.70,hl:{s:"140KG",p:4341.70}},
+  {r:"4SHO041/0",n:"Biceps 70K",p:3759.80,hl:{s:"140KG",p:4122.80}}
+],
+"LEG MACHINES": [
+  {r:"4SHO050/1",n:"Leg Extension 70K",p:3444.10,hl:{s:"140KG",p:3934.70}},
+  {r:"4SHO050/2",n:"Leg Extension 100K",p:3595.90,hl:{s:"140KG",p:4300}},
+  {r:"4SHO051/0",n:"Leg Curl 60K",p:3328.60,hl:{s:"120KG",p:3724.60}},
+  {r:"4SHO052/1",n:"Horizontal Leg Press 160K",p:5672.70},
+  {r:"4SHO052/0",n:"Horizontal Leg Press 200K",p:5712.30},
+  {r:"4SHO053/0",n:"Discs 45° Leg Press",p:3841.20},
+  {r:"4SHO054/1",n:"Squat Standing Calf Machine 160K",p:4177.80},
+  {r:"4SHO054/0",n:"Squat Standing Calf Machine 200K",p:4409.90},
+  {r:"4SHO055/0",n:"Discs Hack Squat",p:3512.30},
+  {r:"4SHO056/0",n:"Adductor / Abductor / Gluteus 70K",p:3738.90,hl:{s:"140KG",p:4618.90}},
+  {r:"4SHO057/0",n:"Discs Seated Calf",p:1824.90},
+  {r:"4SHO059/0",n:"Table Legs (Extension + Curl) 70K",p:4259.20},
+  {r:"4SHO060/0",n:"Adductor Machine 50K",p:3702.60,hl:{s:"120KG",p:4362.60}},
+  {r:"4SHO061/0",n:"Abductor Machine 50K",p:3410.00,hl:{s:"120KG",p:4500}},
+  {r:"4SHO062/0",n:"Gluteus Machine 70K",p:3897.30},
+  {r:"4SHO063/0",n:"Seated Calf Machine 120K",p:3180.10},
+  {r:"4SHO064/0",n:"Adductor + Abductor Machine 70K",p:3814.80,hl:{s:"120KG",p:4500}},
+  {r:"4SHO065/0",n:"Standing Leg Curl Machine 50K",p:3468.30,hl:{s:"100KG",p:3950}}
+],
+"ABDOMINAL MACHINES": [
+  {r:"4SHO068/0",n:"Abdominal Machine 50K",p:3817.00,hl:{s:"100KG",p:4587.00}},
+  {r:"4SHO069/0",n:"Lumbar Machine 60K",p:3274.70},
+  {r:"4SHO031/0",n:"Rotary Torso 50K",p:3652.00},
+  {r:"4SHO086/0",n:"Dipping Hip Flexor",p:1204.50},
+  {r:"4SHO066/0",n:"Dipping Flexor and Chin",p:1393.70},
+  {r:"4SHO087/0",n:"Abdominal Bench",p:951.50},
+  {r:"4SHO088/0",n:"Abdominal Table",p:779.90},
+  {r:"4SHO089/0",n:"Height Regulation Ladder",p:299.20},
+  {r:"4SHO090/0",n:"Abdominal Crunch Bench",p:1183.60}
+],
+"FREE WEIGHT - BENCHES": [
+  {r:"4SHO070/0",n:"Press Bench (horizontal)",p:867.90},
+  {r:"4SHO071/0",n:"Incline Press Bench",p:1282.60},
+  {r:"4SHO072/0",n:"Decline Press Bench",p:1381.60},
+  {r:"4SHO073/0",n:"Olympic Press Bench (horizontal)",p:1087.90},
+  {r:"4SHO074/0",n:"Olympic Incline Press Bench",p:1343.10},
+  {r:"4SHO075/0",n:"Olympic Decline Press Bench",p:1381.60},
+  {r:"4SHO076/0",n:"Shoulder Press Bench",p:1151.70},
+  {r:"4SHO077/0",n:"Olympic Shoulder Press Bench",p:1356.30},
+  {r:"4SHO080/0",n:"Adjustable Bench 0°-90° (with wheels)",p:1036.20},
+  {r:"4SHO080/2",n:"Adjustable Decline Bench",p:1293.60},
+  {r:"4SHO081/0",n:"Vertical Bench",p:773.30},
+  {r:"4SHO082/0",n:"Flat Bench",p:496.10},
+  {r:"4SHO083/0",n:"Scott Bench",p:1083.50},
+  {r:"4SHO084/0",n:"Hyperextensions",p:1030.70},
+  {r:"4SHO085/0",n:"Hyperextensions 45°",p:1014.20},
+  {r:"4SHO099",n:"Bench Pro Home",p:717.20},
+  {r:"4SHO105",n:"Glute-Up Bench",p:2305.60}
+],
+"FREE WEIGHT - RACKS": [
+  {r:"4SHO091/0",n:"Power Rack",p:1864.50},
+  {r:"4SHO091/1",n:"Special Power Rack",p:2102.10},
+  {r:"4SHO092/0",n:"Special Squat Holder with Disc Holder",p:1927.20},
+  {r:"4SHO066/1",n:"Sissy Squat",p:708.40},
+  {r:"4SHO094/0",n:"Single Standing Waist Twister",p:937.20},
+  {r:"4SHO095/0",n:"Double Standing Waist Twister",p:1380.50},
+  {r:"4SHO100",n:"Rack Pro Home",p:1460.80}
+],
+"PLATE LOADED MACHINES": [
+  {r:"4SHP01/0",n:"Chest Press (Ø28 or 50mm)",p:2669.70},
+  {r:"4SHP02/0",n:"Incline Chest Press (Ø28 or 50mm)",p:2669.70},
+  {r:"4SHP03/0",n:"Shoulder Press (Ø28 or 50mm)",p:2669.70},
+  {r:"4SHP04/0",n:"Seated Row (Ø28 or 50mm)",p:2669.70},
+  {r:"4SHP05/0",n:"Dorsal (Ø28 or 50mm)",p:2669.70},
+  {r:"4SHP08/0",n:"Leg Press (Ø28 or 50mm)",p:2669.70},
+  {r:"4SHP09/0",n:"Femoral Lying Discs (Ø28 or 50mm)",p:2669.70},
+  {r:"4SHP10/0",n:"Glute-Up Machine",p:3317.60},
+  {r:"4SHP011/0",n:"Super Squat (Ø28 or 50mm)",p:2669.70}
+],
+"BARS & RACKS": [
+  {r:"1BAR0154",n:"Dumbell Bar (each) Ø28mm",p:49.50},
+  {r:"1BAR0155",n:"Bar 1,20m Ø28mm",p:82.50},
+  {r:"1BAR0156",n:"Bar 1,50m Ø28mm",p:103.40},
+  {r:"1BAR0157",n:"Bar 1,80m Ø28mm",p:116.60},
+  {r:"1BAR0158",n:"Bar 2m Ø28mm",p:127.60},
+  {r:"1BAR0159",n:"Bar 2,2m Ø28mm",p:133.10},
+  {r:"1BAR0160",n:"Bar Z Ø28mm",p:141.90},
+  {r:"1BAR0001",n:"Bar Spring Type Stop Ø28mm",p:6.60},
+  {r:"4SHO408/0",n:"Dominated Bar (wall fixing)",p:282.70},
+  {r:"1OTR0040",n:"Roman Bar Chrome",p:313.50},
+  {r:"4SHO410/0",n:"Vertical Rack 12 bars Ø28mm",p:504.90},
+  {r:"4SHO410/1",n:"Vertical Olympic Rack Shock",p:680.90},
+  {r:"4SHO411/0",n:"Bar and Disk Rack",p:620.40},
+  {r:"4SHO411/1",n:"Olympic Bar and Disk Rack Shock",p:903.10},
+  {r:"1BAR0161",n:"Bar 1,20m Ø50mm",p:196.90},
+  {r:"1BAR0162",n:"Bar 1,50m Ø50mm",p:210.10},
+  {r:"1BAR0163",n:"Bar 1,80m Ø50mm",p:236.50},
+  {r:"1BAR0164",n:"Bar 2m Ø50mm",p:250.80},
+  {r:"1BAR0165",n:"Bar 2,2m Ø50mm",p:258.50},
+  {r:"1BAR0166",n:"Bar Z Ø50mm",p:223.30},
+  {r:"1OTR0048",n:"Olympic Triceps Bar",p:359.70},
+  {r:"1MUE0014",n:"Bar Spring Type Stop Ø50mm (pair)",p:12.10}
+],
+"DUMBELLS": [
+  {r:"1DIS0018",n:"Dumbell 2,5kg",p:59.40},
+  {r:"1DIS0019",n:"Dumbell 5kg",p:68.20},
+  {r:"1DIS0020",n:"Dumbell 7,5kg",p:77.00},
+  {r:"1DIS0021",n:"Dumbell 10kg",p:86.90},
+  {r:"1DIS0022",n:"Dumbell 12,5kg",p:97.90},
+  {r:"1DIS0023",n:"Dumbell 15kg",p:107.80},
+  {r:"1DIS0024",n:"Dumbell 17,5kg",p:116.60},
+  {r:"1DIS0025",n:"Dumbell 20kg",p:127.60},
+  {r:"1DIS0026",n:"Dumbell 22,5kg",p:137.50},
+  {r:"1DIS0027",n:"Dumbell 25kg",p:146.30},
+  {r:"1DIS0028",n:"Dumbell 27,5kg",p:156.20},
+  {r:"1DIS0029",n:"Dumbell 30kg",p:167.20},
+  {r:"1DIS0030",n:"Dumbell 32,5kg",p:178.20},
+  {r:"1DIS0031",n:"Dumbell 35kg",p:190.30},
+  {r:"1DIS0032",n:"Dumbell 37,5kg",p:205.70},
+  {r:"1DIS0033",n:"Dumbell 40kg",p:218.90},
+  {r:"1DIS0034",n:"Dumbell 42,5kg",p:232.10},
+  {r:"1DIS0035",n:"Dumbell 45kg",p:247.50},
+  {r:"1DIS0036",n:"Dumbell 47,5kg",p:262.90},
+  {r:"1DIS0037",n:"Dumbell 50kg",p:276.10},
+  {r:"1DIS0038",n:"Dumbell 55kg",p:308.00},
+  {r:"1DIS0039",n:"Dumbell 60kg",p:339.90},
+  {r:"1DIS0066",n:"Dumbell Set 2,5-20kg (16 stuks)",p:1482.80},
+  {r:"1DIS0067",n:"Dumbell Set 2,5-30kg (24 stuks)",p:2697.20},
+  {r:"1DIS0068",n:"Dumbell Set 2,5-40kg (24 stuks)",p:4283.40},
+  {r:"4SHO501/0",n:"3-Tier Dumbell Rack",p:1246.30},
+  {r:"4SHO500/4",n:"2-Tier Dumbell Rack 4,5m",p:1964.60},
+  {r:"4SHO500/3",n:"2-Tier Dumbell Rack 3,03m",p:1249.60}
+],
+"DISCS & WEIGHTS": [
+  {r:"1DIS0006",n:"Disc Ø28mm 1,25kg",p:7.70},
+  {r:"1DIS0007",n:"Disc Ø28mm 2,5kg",p:15.40},
+  {r:"1DIS0008",n:"Disc Ø28mm 5kg",p:30.80},
+  {r:"1DIS0009",n:"Disc Ø28mm 10kg",p:61.60},
+  {r:"1DIS0010",n:"Disc Ø28mm 15kg",p:92.40},
+  {r:"1DIS0011",n:"Disc Ø28mm 20kg",p:123.20},
+  {r:"4SHO206/0",n:"Single Weight Stack Ø28mm Shock",p:577.50},
+  {r:"4SHO207/0",n:"Double Weight Rack Ø28mm Shock",p:795.30},
+  {r:"1DIS0012",n:"Disc Ø50mm 1,5kg",p:7.70},
+  {r:"1DIS0013",n:"Disc Ø50mm 2,5kg",p:15.40},
+  {r:"1DIS0014",n:"Disc Ø50mm 5kg",p:30.80},
+  {r:"1DIS0015",n:"Disc Ø50mm 10kg",p:61.60},
+  {r:"1DIS0016",n:"Disc Ø50mm 15kg",p:92.40},
+  {r:"1DIS0017",n:"Disc Ø50mm 20kg",p:123.20},
+  {r:"4SHO206/1",n:"Single Weight Stack Ø50mm Shock",p:732.60},
+  {r:"4SHO207/1",n:"Double Weight Rack Ø50mm Shock",p:1007.60}
+],
+"PULLEY ACCESSORIES": [
+  {r:"1OTR0033",n:"Dorsal Pala (High Pulley)",p:130.90},
+  {r:"1OTR0034",n:"Dorsal (High Pulley)",p:118.80},
+  {r:"1OTR0035",n:"Gironda (Low Pulley)",p:82.50},
+  {r:"1OTR0036",n:"Separate Hand Hold / Grips",p:51.70},
+  {r:"1OTR0037",n:"Straight Cut Gyrating",p:97.90},
+  {r:"1OTR0038",n:"V Cut Gyrating (triceps)",p:114.40},
+  {r:"1OTR0039",n:"Cord Hand Grip (triceps)",p:31.90}
+],
+"CARDIO": [
+  {r:"CARDIO-001",n:"Loopband (met scherm)",p:9000.00},
+  {r:"CARDIO-002",n:"Stairmaster (met scherm)",p:9000.00},
+  {r:"CARDIO-003",n:"Bike (zonder scherm)",p:3200.00},
+  {r:"CARDIO-004",n:"Crosstrainer (zonder scherm)",p:6200.00},
+  {r:"CARDIO-005",n:"Air Bike",p:1800.00},
+  {r:"CARDIO-006",n:"SKY",p:2300.00},
+  {r:"CARDIO-007",n:"Curved Loopband",p:7600.00}
+]
+};
+
+</script>
+<script>
+// ── APP LOGIC ──
+var cart = [];
+
+var fmt = function(n) {
+  return new Intl.NumberFormat('nl-NL', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n);
+};
+
+var vPct = function(b) {
+  if (b < 50000) return 0;
+  if (b < 75000) return 0.05;
+  if (b < 125000) return 0.10;
+  return 0.15;
+};
+
+// Flatten all products
+var ALL = [];
+Object.keys(CAT).forEach(function(cat) {
+  CAT[cat].forEach(function(p) {
+    ALL.push(Object.assign({}, p, {cat: cat}));
+  });
+});
+
+// ── INIT ──
+window.onload = function() {
+  var yr = new Date().getFullYear();
+  document.getElementById('kR').value = 'TFB-' + yr + '-' + (Math.floor(Math.random()*900)+100);
+  document.getElementById('kD').value = new Date().toISOString().split('T')[0];
+
+  var sel = document.getElementById('catF');
+  Object.keys(CAT).forEach(function(c) {
+    var o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    sel.appendChild(o);
+  });
+
+  var img = document.getElementById('hdrLogo');
+  img.src = LOGO;
+  img.onload = function() {
+    img.style.display = 'block';
+    document.getElementById('hdrLogoTxt').style.display = 'none';
+  };
+
+  renderProds();
+  updateSum();
+  updateApiKeyUI();
+};
+
+// ── TABS ──
+function gT(i) {
+  for (var j = 0; j < 5; j++) {
+    document.getElementById('T' + j).style.display = j === i ? 'block' : 'none';
+    document.querySelectorAll('.tab')[j].classList.toggle('on', j === i);
+  }
+  if (i === 2) renderCart();
+  if (i === 3) updateSum();
+  if (i === 4) renderPreview();
+  window.scrollTo(0, 0);
+}
+
+// ── PRODUCTS ──
+function renderProds() {
+  var q = document.getElementById('srch').value.toLowerCase();
+  var cat = document.getElementById('catF').value;
+  var hl = document.getElementById('hlCb').checked;
+  document.getElementById('hlTog').className = 'hltog' + (hl ? ' on' : '');
+
+  var f = ALL.filter(function(p) {
+    if (cat && p.cat !== cat) return false;
+    if (hl && !p.hl) return false;
+    if (q && !p.n.toLowerCase().includes(q) && !p.r.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  var el = document.getElementById('prodList');
+  if (!f.length) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:#888">Geen producten gevonden</div>';
+    return;
+  }
+
+  var rows = '';
+  f.forEach(function(p) {
+    var hlBtn = '';
+    if (p.hl) {
+      var hlLabel = p.hl.p ? ('HL ' + p.hl.s + ' \u20ac' + fmt(p.hl.p)) : 'HL op aanvraag';
+      hlBtn = '<button class="btn-sm btn-sm-gold" onclick="addItem(\'' + p.r + '\',true)">' + hlLabel + '</button>';
+    }
+    rows += '<div class="prow">'
+      + '<div style="flex:1;min-width:0">'
+      +   '<div class="pname">' + p.n + (p.hl ? '<span class="badge badge-hl">HL</span>' : '') + '</div>'
+      +   '<div class="pmeta">' + p.r + ' &bull; ' + p.cat + '</div>'
+      + '</div>'
+      + '<span class="pprice">\u20ac ' + fmt(p.p) + '</span>'
+      + '<div class="pbtns">'
+      +   '<button class="btn-sm btn-sm-navy" onclick="addItem(\'' + p.r + '\',false)">+ Standaard</button>'
+      +   hlBtn
+      + '</div>'
+      + '</div>';
+  });
+  el.innerHTML = rows;
+}
+
+function togHL() {
+  var cb = document.getElementById('hlCb');
+  cb.checked = !cb.checked;
+  renderProds();
+}
+
+// ── CART ──
+function addItem(ref, useHL) {
+  var p = ALL.find(function(x) { return x.r === ref; });
+  if (!p) return;
+  var uid = ref + (useHL ? '-HL' : '');
+  var price = (useHL && p.hl && p.hl.p) ? p.hl.p : p.p;
+  var name = p.n + (useHL && p.hl ? ' \u2014 Heavy Lifters (' + p.hl.s + ')' : '');
+  var ex = cart.find(function(i) { return i.uid === uid; });
+  if (ex) {
+    ex.qty++;
+  } else {
+    cart.push({uid: uid, ref: ref, name: name, cat: p.cat, price: price, qty: 1, mk: true, isHL: useHL});
+  }
+  updateBadge();
+  // Flash green
+  var rows = document.querySelectorAll('.prow');
+  rows.forEach(function(r) {
+    if (r.textContent.indexOf(ref) >= 0) {
+      r.style.background = '#e8f5e9';
+      setTimeout(function() { r.style.background = ''; }, 500);
+    }
+  });
+}
+
+function removeItem(uid) {
+  cart = cart.filter(function(i) { return i.uid !== uid; });
+  renderCart();
+  updateBadge();
+}
+
+function setQty(uid, v) {
+  var q = parseInt(v) || 0;
+  if (q <= 0) { removeItem(uid); return; }
+  var it = cart.find(function(i) { return i.uid === uid; });
+  if (it) it.qty = q;
+  updateBadge();
+  updateSum();
+}
+
+function togMK(uid) {
+  var it = cart.find(function(i) { return i.uid === uid; });
+  if (it) it.mk = !it.mk;
+  renderCart();
+  updateSum();
+}
+
+function updateBadge() {
+  var el = document.getElementById('cartBadge');
+  if (!cart.length) { el.style.display = 'none'; return; }
+  var tot = cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
+  el.style.display = 'block';
+  el.textContent = cart.length + ' art. \u00b7 \u20ac ' + fmt(tot);
+}
+
+function renderCart() {
+  var list = document.getElementById('cartList');
+  var empty = document.getElementById('cartEmpty');
+  var btns = document.getElementById('cartBtns');
+  if (!cart.length) {
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    btns.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  btns.style.display = 'flex';
+
+  var rows = '';
+  cart.forEach(function(i) {
+    rows += '<div class="crow">'
+      + '<div class="cinfo">'
+      +   (i.isHL ? '<span class="badge badge-nv">HL</span> ' : '')
+      +   '<span class="cname">' + i.name + '</span>'
+      +   '<div class="cref">' + i.ref + '</div>'
+      + '</div>'
+      + '<div class="qrow">'
+      +   '<button class="qbtn" onclick="setQty(\'' + i.uid + '\',' + (i.qty-1) + ')">&#8722;</button>'
+      +   '<input class="qinp" type="number" value="' + i.qty + '" min="1" onchange="setQty(\'' + i.uid + '\',this.value)">'
+      +   '<button class="qbtn" onclick="setQty(\'' + i.uid + '\',' + (i.qty+1) + ')">+</button>'
+      + '</div>'
+      + '<label class="mklbl" style="color:' + (i.mk ? '#c0392b' : '#aaa') + '">'
+      +   '<input type="checkbox" ' + (i.mk ? 'checked' : '') + ' onchange="togMK(\'' + i.uid + '\')">'
+      +   ' \u20ac250 maatwerk'
+      + '</label>'
+      + '<span class="ctotal">\u20ac ' + fmt(i.price * i.qty) + '</span>'
+      + '<button class="delbtn" onclick="removeItem(\'' + i.uid + '\')">&times;</button>'
+      + '</div>';
+  });
+  list.innerHTML = rows;
+}
+
+// ── TOTALS ──
+function calcTotals() {
+  var sub = cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
+  var mk  = cart.filter(function(i) { return i.mk; }).reduce(function(s, i) { return s + 250 * i.qty; }, 0);
+  var vp  = vPct(sub);
+  var va  = sub * vp;
+  var nv  = sub - va;
+  var ekEl = document.getElementById('extraKort');
+  var ekPct = ekEl ? (parseFloat(ekEl.value) || 0) : 0;
+  ekPct = Math.max(0, Math.min(100, ekPct));
+  var ekAmt = nv * (ekPct / 100);
+  nv = nv - ekAmt;
+  var trk = parseInt((document.getElementById('trk') || {}).value) || 1;
+  var tr = Math.min(trk * 300, 2500);
+  var ic = document.getElementById('ins');
+  var inst = (ic && ic.checked) ? Math.min(nv * 0.075, 6500) : 0;
+  var ex = nv + tr + inst;
+  var btw = ex * 0.21;
+  var inc = ex + btw;
+  return {sub:sub, mk:mk, vp:vp, va:va, ekPct:ekPct, ekAmt:ekAmt, nv:nv, trk:trk, tr:tr, inst:inst, ex:ex, btw:btw, inc:inc};
+}
+
+function trLabel(t) {
+  var s = t.trk === 1 ? 'palletplek' : 'palletplekken';
+  return t.tr >= 2500
+    ? t.trk + ' ' + s + ' (volle trailer €2.500)'
+    : t.trk + ' ' + s + ' à €300';
+}
+
+function updateSum() {
+  // Update staffel info display
+  var si = document.getElementById('staffelInfo');
+  if (si) {
+    var sub = cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
+    var vp = vPct(sub);
+    if (vp === 0) {
+      si.textContent = sub > 0 ? 'Nog geen korting (< €50.000)' : 'Wordt automatisch berekend';
+      si.style.color = '#888';
+    } else {
+      si.textContent = Math.round(vp * 100) + '% korting van toepassing ✓';
+      si.style.color = '#27ae60';
+    }
+  }
+  // Update transport info display
+  var ti = document.getElementById('trkInfo');
+  if (ti) {
+    var trkVal = parseInt((document.getElementById('trk') || {}).value) || 1;
+    var trCalc = Math.min(trkVal * 300, 2500);
+    var capped = (trkVal * 300) >= 2500;
+    ti.innerHTML = '€ ' + new Intl.NumberFormat('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2}).format(trCalc)
+      + (capped ? ' <span style="font-size:11px;color:#27ae60;font-weight:700"> ✓ volle trailer</span>' : '');
+    ti.style.color = capped ? '#27ae60' : '#1a3a5c';
+  }
+
+  var el = document.getElementById('sumRows');
+  if (!el) return;
+  var t = calcTotals();
+
+  var h = '<div class="srow"><span>Subtotaal apparatuur</span><span>\u20ac ' + fmt(t.sub) + '</span></div>';
+  if (t.mk > 0)
+    h += '<div class="srow red"><span>Maatwerk korting (\u20ac250/app.)</span><span>- \u20ac ' + fmt(t.mk) + '</span></div>';
+  if (t.vp > 0)
+    h += '<div class="srow red"><span>Volumekorting (' + Math.round(t.vp*100) + '%)</span><span>- \u20ac ' + fmt(t.va) + '</span></div>';
+  if (t.ekPct > 0)
+    h += '<div class="srow red"><span>Speciale korting (' + t.ekPct + '%)</span><span>- \u20ac ' + fmt(t.ekAmt) + '</span></div>';
+  h += '<div class="srow bold sep"><span>Apparatuur na korting</span><span>\u20ac ' + fmt(t.nv) + '</span></div>';
+  h += '<div class="srow"><span>Transport (' + trLabel(t) + ')</span><span>\u20ac ' + fmt(t.tr) + '</span></div>';
+  if (t.inst > 0)
+    h += '<div class="srow"><span>Installatie</span><span>\u20ac ' + fmt(t.inst) + '</span></div>';
+  h += '<div class="srow bold sep"><span>Totaal excl. BTW</span><span>\u20ac ' + fmt(t.ex) + '</span></div>';
+  h += '<div class="srow"><span>BTW 21%</span><span>\u20ac ' + fmt(t.btw) + '</span></div>';
+  h += '<div class="stotal"><span>Totaal incl. BTW</span><span>\u20ac ' + fmt(t.inc) + '</span></div>';
+  if (t.vp > 0)
+    h += '<div class="sgreen">\u2713 Volumekorting ' + Math.round(t.vp*100) + '% van toepassing</div>';
+  h += '<div class="sdsc"><strong>Kortingsniveaus:</strong><br>'
+     + '&lt;\u20ac50K: geen &nbsp; \u20ac50K\u201375K: 5%<br>'
+     + '\u20ac75K\u2013125K: 10% &nbsp; &gt;\u20ac125K: 15%</div>';
+  el.innerHTML = h;
+}
+
+
+// ── API KEY MANAGEMENT ──
+function loadApiKey() {
+  try { return localStorage.getItem('telju_api_key') || ''; } catch(e) { return ''; }
+}
+function loadWorkerUrl() {
+  try { return localStorage.getItem('telju_worker_url') || 'https://telju-proxy.damianstal01.workers.dev'; } catch(e) { return 'https://telju-proxy.damianstal01.workers.dev'; }
+}
+
+function saveApiKey() {
+  var val = document.getElementById('apiKeyVal').value.trim();
+  var workerUrl = document.getElementById('workerUrlVal').value.trim();
+  if (!val.startsWith('sk-ant-')) {
+    alert('Dit lijkt geen geldige Anthropic API key. Een key begint met sk-ant-...');
+    return;
+  }
+  // Worker URL is pre-filled, use default if empty
+  if (!workerUrl) workerUrl = 'https://telju-proxy.damianstal01.workers.dev';
+  try {
+    localStorage.setItem('telju_api_key', val);
+    localStorage.setItem('telju_worker_url', workerUrl);
+    updateApiKeyUI();
+    document.getElementById('apiKeyInput').style.display = 'none';
+    document.getElementById('apiKeyToggleBtn').textContent = 'Instellingen wijzigen';
+  } catch(e) {
+    alert('Kon instellingen niet opslaan: ' + e.message);
+  }
+}
+
+function toggleApiInput() {
+  var inp = document.getElementById('apiKeyInput');
+  var isVisible = inp.style.display !== 'none';
+  inp.style.display = isVisible ? 'none' : 'block';
+  if (!isVisible) {
+    var existing = loadApiKey();
+    if (existing) document.getElementById('apiKeyVal').value = existing;
+    document.getElementById('apiKeyVal').focus();
+  }
+}
+
+function updateApiKeyUI() {
+  var key = loadApiKey();
+  var card = document.getElementById('apiKeyCard');
+  var status = document.getElementById('apiKeyStatus');
+  var btn = document.getElementById('apiKeyToggleBtn');
+  if (key) {
+    status.textContent = 'Ingesteld ✓ (sk-ant-....' + key.slice(-4) + ')';
+    status.style.color = '#27ae60';
+    card.style.borderColor = '#27ae60';
+    card.style.background = '#f0fff4';
+    if (btn) btn.textContent = 'API Key wijzigen';
+  } else {
+    status.textContent = 'Niet ingesteld — vereist voor AI-analyse';
+    status.style.color = '#c0392b';
+    card.style.borderColor = '#c8a020';
+    card.style.background = '#fffbee';
+    if (btn) btn.textContent = 'API Key instellen';
+  }
+}
+
+// ── IMAGE HANDLING ──
+
+var _imgB64 = null;
+var _imgType = null;
+
+function onImgSelect(inp) {
+  var file = inp.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var dataUrl = e.target.result;
+    // Store base64 without the data:image/...;base64, prefix
+    var parts = dataUrl.split(',');
+    _imgB64 = parts[1];
+    _imgType = file.type || 'image/jpeg';
+    // Show preview
+    document.getElementById('imgThumb').src = dataUrl;
+    document.getElementById('imgPreview').style.display = 'block';
+    document.getElementById('imgLblTxt').textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImg() {
+  _imgB64 = null;
+  _imgType = null;
+  document.getElementById('aiImg').value = '';
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('imgLblTxt').textContent = 'Tik om foto te kiezen (iPhone camera, screenshot, PDF scan...)';
+}
+
+// ── AI ANALYSE ──
+async function doAIAnalyse() {
+  var txt = document.getElementById('aiTxt').value.trim();
+  if (!txt && !_imgB64) {
+    showStatus('error', 'Plak eerst een lijst of upload een foto.');
+    return;
+  }
+
+  var btn = document.getElementById('aiBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Analyseren...';
+  showStatus('info', 'Claude analyseert de lijst en zoekt de beste matches...');
+
+  // Build the catalog summary for Claude
+  var catalogSummary = [];
+  ALL.forEach(function(p) {
+    catalogSummary.push(p.r + ' | ' + p.n + ' | ' + p.cat + (p.hl ? ' | HL beschikbaar' : ''));
+  });
+
+  var systemPrompt = 'Je bent een assistent voor Telju Fitness Benelux B.V., een groothandel in professionele sportschoolapparatuur. '
+    + 'Je taak: analyseer wat de klant nodig heeft en selecteer de best passende producten uit de catalogus. '
+    + 'Geef ALLEEN een JSON array terug, geen tekst ervoor of erna. '
+    + 'Formaat: [{"ref":"4SHO050/2","useHL":false,"qty":1,"reason":"Leg Extension gevraagd"},...]  '
+    + 'useHL is true als de klant expliciet zwaardere gewichten of Heavy Lifters wil. '
+    + 'qty is het gevraagde aantal (standaard 1). '
+    + 'Wees specifiek en match zo nauwkeurig mogelijk op de catalogus. '
+    + 'Selecteer maximaal 20 producten. '
+    + 'CATALOGUS:\n' + catalogSummary.join('\n');
+
+  var userContent = [];
+
+  if (_imgB64) {
+    userContent.push({
+      type: 'image',
+      source: { type: 'base64', media_type: _imgType, data: _imgB64 }
+    });
+  }
+
+  var textMsg = txt
+    ? 'Analyseer deze klantenlijst en selecteer de passende producten:\n\n' + txt
+    : 'Analyseer de afbeelding en selecteer de passende producten uit de catalogus.';
+  userContent.push({ type: 'text', text: textMsg });
+
+  try {
+    var apiKey = loadApiKey();
+    if (!apiKey) {
+      showStatus('error', 'Geen API key ingesteld. Klik op "API Key instellen" hierboven.');
+      btn.disabled = false;
+      btn.textContent = '✨ Analyseer & Selecteer producten';
+      return;
+    }
+
+    var resp = await fetch('https://telju-proxy.damianstal01.workers.dev', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userContent }]
+      })
+    });
+
+    if (!resp.ok) throw new Error('API fout: ' + resp.status);
+    var data = await resp.json();
+    var raw = data.content[0].text.trim();
+
+    // Strip markdown if present
+    raw = raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+
+    var items = JSON.parse(raw);
+    if (!Array.isArray(items) || items.length === 0) throw new Error('Geen producten gevonden');
+
+    // Add items to cart
+    var added = 0;
+    var notFound = [];
+    items.forEach(function(item) {
+      var p = ALL.find(function(x) { return x.r === item.ref; });
+      if (p) {
+        // Set quantity
+        for (var q = 0; q < (item.qty || 1); q++) {
+          var useHL = item.useHL && p.hl;
+          var uid = p.r + (useHL ? '-HL' : '');
+          var price = (useHL && p.hl && p.hl.p) ? p.hl.p : p.p;
+          var name = p.n + (useHL && p.hl ? ' — Heavy Lifters (' + p.hl.s + ')' : '');
+          var ex = cart.find(function(i) { return i.uid === uid; });
+          if (ex) { ex.qty++; } else {
+            cart.push({uid:uid, ref:p.r, name:name, cat:p.cat, price:price, qty:1, mk:true, isHL:useHL});
+          }
+        }
+        added++;
+      } else {
+        notFound.push(item.ref);
+      }
+    });
+
+    updateBadge();
+    var msg = '✓ ' + added + ' producten toegevoegd aan de selectie.';
+    if (notFound.length) msg += ' (' + notFound.length + ' niet gevonden: ' + notFound.join(', ') + ')';
+    showStatus('ok', msg);
+
+    // Auto-navigate to cart after short delay
+    setTimeout(function() { gT(2); }, 1200);
+
+  } catch(e) {
+    console.error(e);
+    showStatus('error', 'Fout: ' + e.message + '. Probeer opnieuw of gebruik handmatig zoeken.');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '\u2728 Analyseer & Selecteer producten';
+}
+
+function showStatus(type, msg) {
+  var el = document.getElementById('aiStatus');
+  var colors = {
+    ok:    'background:#e8f5e9;color:#2e7d32',
+    error: 'background:#fdecea;color:#c0392b',
+    info:  'background:#e3f2fd;color:#1565c0'
+  };
+  el.innerHTML = '<div style="' + (colors[type]||colors.info) + ';padding:8px 12px;border-radius:8px;font-size:13px">' + msg + '</div>';
+}
+
+// ── QUICK SEARCH ──
+function doSearch() {
+  var raw = document.getElementById('aiIn').value.trim();
+  var q = raw.toLowerCase();
+  if (!q) return;
+  var fb = document.getElementById('aiStatus');
+
+  var SETS = [
+    {k:['benen','leg','squat','calf','kuit','adduct','abduct','gluteus','glute','hamstring','quad'], c:['LEG MACHINES']},
+    {k:['borst','chest','pec','bench press','press bench','incline','decline'], c:['PEC MACHINES','FREE WEIGHT - BENCHES']},
+    {k:['rug','back','pulley','row','rowing','pullover','chin','dipping','dorsal','lat'], c:['BACK MACHINES']},
+    {k:['schouder','shoulder','delt'], c:['SHOULDER MACHINES']},
+    {k:['arm','bicep','tricep'], c:['ARM MACHINES']},
+    {k:['buik','ab','abdomi','lumbar','torso','waist','oblique'], c:['ABDOMINAL MACHINES']},
+    {k:['cardio','loop','treadmill','bike','fiets','stair','cross','air','curved','sky'], c:['CARDIO']},
+    {k:['dumbell','dumbbell','halter'], c:['DUMBELLS']},
+    {k:['schijf','disc','disk','gewicht','weight'], c:['DISCS & WEIGHTS']},
+    {k:['bar','stang','barbell','roman'], c:['BARS & RACKS']},
+    {k:['plate loaded'], c:['PLATE LOADED MACHINES']},
+    {k:['grip','handle','attachment'], c:['PULLEY ACCESSORIES']},
+    {k:['complete','volledig','alles','full','totaal','gym','sportschool','commercieel','circuit'],
+      c:['PEC MACHINES','LEG MACHINES','BACK MACHINES','SHOULDER MACHINES','ARM MACHINES','ABDOMINAL MACHINES']},
+    {k:['power rack','squat rack'], c:['FREE WEIGHT - RACKS']},
+    {k:['functional','trainer','cable','crossover'], c:['BACK MACHINES']}
+  ];
+
+  var matched = [];
+  SETS.forEach(function(s) {
+    if (s.k.some(function(k) { return q.indexOf(k) >= 0; })) {
+      s.c.forEach(function(c) { if (matched.indexOf(c) < 0) matched.push(c); });
+    }
+  });
+
+  if (!matched.length) {
+    var direct = ALL.filter(function(p) {
+      return p.n.toLowerCase().split(' ').some(function(w) { return w.length > 3 && q.indexOf(w) >= 0; })
+          || p.r.toLowerCase().indexOf(q) >= 0;
+    });
+    if (direct.length) {
+      direct.slice(0, 8).forEach(function(p) { addItem(p.r, false); });
+      document.getElementById('aiIn').value = '';
+      fb.innerHTML = '<div class="fb fb-ok">\u2713 ' + Math.min(direct.length,8) + ' producten toegevoegd</div>';
+      setTimeout(function() { gT(2); }, 600);
+      return;
+    }
+    fb.innerHTML = '<div class="fb fb-err">Niet gevonden. Probeer: benen, borst, rug, cardio, complete gym&hellip;</div>';
+    return;
+  }
+
+  var isAll = ['complete','volledig','alles','full','circuit','gym','sportschool'].some(function(k) { return q.indexOf(k) >= 0; });
+  var sel = []; var seen = {};
+  matched.forEach(function(cat) {
+    var prods = ALL.filter(function(p) { return p.cat === cat; });
+    var scored = prods.map(function(p) {
+      var sc = q.split(' ').filter(function(w) { return w.length > 2 && p.n.toLowerCase().indexOf(w) >= 0; }).length;
+      return {p: p, sc: sc};
+    }).sort(function(a, b) { return b.sc - a.sc; });
+    scored.slice(0, isAll ? 4 : 3).forEach(function(x) {
+      if (!seen[x.p.r]) { seen[x.p.r] = true; sel.push(x.p); }
+    });
+  });
+
+  if (!sel.length) {
+    fb.innerHTML = '<div class="fb fb-err">Geen passende producten gevonden.</div>';
+    return;
+  }
+
+  sel.slice(0, 12).forEach(function(p) { addItem(p.r, false); });
+  fb.innerHTML = '<div class="fb fb-ok">\u2713 ' + Math.min(sel.length,12) + ' producten toegevoegd voor &ldquo;' + raw + '&rdquo;</div>';
+  document.getElementById('aiIn').value = '';
+  updateBadge();
+  setTimeout(function() { gT(2); }, 600);
+}
+
+// ── BUILD OFFERTE HTML ──
+function buildOfferte() {
+  var k = {
+    naam:    document.getElementById('kN').value || '\u2014',
+    bedrijf: document.getElementById('kB').value,
+    adres:   document.getElementById('kA').value,
+    stad:    document.getElementById('kS').value,
+    email:   document.getElementById('kE').value,
+    nr:      document.getElementById('kR').value,
+    datum:   document.getElementById('kD').value,
+    geldig:  document.getElementById('kG').value
+  };
+  var t = calcTotals();
+  var ind  = document.getElementById('indic').value;
+  var opm  = document.getElementById('opmk').value;
+
+  var rows = '';
+  cart.forEach(function(i) {
+    rows += '<tr>'
+      + '<td style="font-size:8pt;color:#777;width:90px">' + i.ref + '</td>'
+      + '<td>' + (i.isHL ? '<span class="badge badge-nv" style="font-size:7pt">HL</span> ' : '') + i.name + '</td>'
+      + '<td class="c" style="width:50px">' + i.qty + '</td>'
+      + '<td class="r" style="width:90px">\u20ac ' + fmt(i.price) + '</td>'
+      + '<td class="r" style="width:90px">\u20ac ' + fmt(i.price * i.qty) + '</td>'
+      + '</tr>';
+  });
+
+  var klantInfo = '<strong>' + k.naam + '</strong>'
+    + (k.bedrijf ? '<br>' + k.bedrijf : '')
+    + (k.adres   ? '<br>' + k.adres   : '')
+    + (k.stad    ? '<br>' + k.stad    : '')
+    + (k.email   ? '<br>' + k.email   : '');
+
+  var offInfo = 'Nr: <strong>' + k.nr + '</strong><br>Datum: ' + k.datum
+    + (k.geldig ? '<br>Geldig tot: ' + k.geldig : '')
+    + '<br>Betaling: 60% vooraf, 40% bij levering<br>Productietijd: ca. 90 dagen';
+
+  var html = '<div class="off">'
+    + '<div class="off-hdr">'
+    +   '<img src="' + LOGO + '" class="off-logo" alt="Telju Fitness">'
+    +   '<div class="off-co"><strong>Telju Fitness Benelux B.V.</strong><br>'
+    +     'Havenkant 2, 4781AA Moerdijk<br>'
+    +     'info@telju.nl<br>'
+    +     'KVK: 92601855 &bull; BTW: NL866112881B01<br>'
+    +     'Bank: NL45 INGB 0106 0408 71'
+    +   '</div>'
+    + '</div>'
+    + '<div class="off-title">OFFERTE</div>'
+    + '<div class="off-meta">'
+    +   '<div class="off-mb"><div class="off-mh">Klantgegevens</div><div class="off-mp">' + klantInfo + '</div></div>'
+    +   '<div class="off-mb"><div class="off-mh">Offertegegevens</div><div class="off-mp">' + offInfo + '</div></div>'
+    + '</div>'
+    + '<table class="off-tbl">'
+    +   '<thead><tr>'
+    +     '<th>Referentie</th><th>Omschrijving</th>'
+    +     '<th class="c">Aantal</th><th class="r">Prijs p/stuk</th><th class="r">Totaal</th>'
+    +   '</tr></thead>'
+    +   '<tbody>' + rows + '</tbody>'
+    + '</table>'
+    + '<div class="off-tots"><table>'
+    +   '<tr><td>Subtotaal apparatuur</td><td style="text-align:right">\u20ac ' + fmt(t.sub) + '</td></tr>'
+    +   (t.mk > 0 ? '<tr class="tr"><td>Maatwerk korting (\u20ac250 p/app.)</td><td style="text-align:right">- \u20ac ' + fmt(t.mk) + '</td></tr>' : '')
+    +   (t.vp > 0 ? '<tr class="tr"><td>Volumekorting (' + Math.round(t.vp*100) + '%)</td><td style="text-align:right">- \u20ac ' + fmt(t.va) + '</td></tr>' : '')
+    +   (t.ekPct > 0 ? '<tr class="tr"><td>Speciale korting (' + t.ekPct + '%)</td><td style="text-align:right">- \u20ac ' + fmt(t.ekAmt) + '</td></tr>' : '')
+    +   '<tr class="ts tb"><td>Apparatuur na korting</td><td style="text-align:right">\u20ac ' + fmt(t.nv) + '</td></tr>'
+    +   '<tr><td>Transport (' + trLabel(t) + ')</td><td style="text-align:right">\u20ac ' + fmt(t.tr) + '</td></tr>'
+    +   (t.inst > 0 ? '<tr><td>Installatie (7,5% max. \u20ac6.500)</td><td style="text-align:right">\u20ac ' + fmt(t.inst) + '</td></tr>' : '')
+    +   '<tr class="ts tb"><td>Totaal excl. BTW</td><td style="text-align:right">\u20ac ' + fmt(t.ex) + '</td></tr>'
+    +   '<tr><td>BTW 21%</td><td style="text-align:right">\u20ac ' + fmt(t.btw) + '</td></tr>'
+    +   '<tr class="tg"><td>TOTAAL INCL. BTW</td><td style="text-align:right">\u20ac ' + fmt(t.inc) + '</td></tr>'
+    + '</table></div>'
+    + (t.mk > 0 || t.vp > 0 || t.ekPct > 0 ? (function(){
+        var totalKort = t.mk + t.va + t.ekAmt;
+        var totalKortPct = t.sub > 0 ? Math.round((totalKort / t.sub) * 100) : 0;
+        var lines = '<div style="margin-top:14px;background:linear-gradient(135deg,#1a3a5c 0%,#2d5a8e 100%);'
+          + 'border-radius:8px;padding:14px 16px;color:#fff">'
+          + '<div style="font-size:8pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:.8;margin-bottom:8px">'
+          + 'Uw voordeel bij deze bestelling</div>'
+          + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">';
+        if (t.vp > 0)
+          lines += '<div style="text-align:center;flex:1;min-width:80px">'
+            + '<div style="font-size:16pt;font-weight:700">' + Math.round(t.vp*100) + '%</div>'
+            + '<div style="font-size:7.5pt;opacity:.8">Volumekorting</div></div>';
+        if (t.mk > 0)
+          lines += '<div style="text-align:center;flex:1;min-width:80px">'
+            + '<div style="font-size:16pt;font-weight:700">&euro; ' + fmt(t.mk) + '</div>'
+            + '<div style="font-size:7.5pt;opacity:.8">Maatwerk voordeel</div></div>';
+        if (t.ekPct > 0)
+          lines += '<div style="text-align:center;flex:1;min-width:80px">'
+            + '<div style="font-size:16pt;font-weight:700">' + t.ekPct + '%</div>'
+            + '<div style="font-size:7.5pt;opacity:.8">Speciale korting</div></div>';
+        lines += '<div style="text-align:center;flex:1;min-width:80px;border-left:1px solid rgba(255,255,255,.3);padding-left:12px">'
+          + '<div style="font-size:18pt;font-weight:700">&euro; ' + fmt(totalKort) + '</div>'
+          + '<div style="font-size:7.5pt;opacity:.8">Totaal voordeel (' + totalKortPct + '%)</div></div>'
+          + '</div></div>';
+        return lines;
+      })() : '')
+    + '<div style="margin-top:10px;background:#f4f7fa;border-left:3px solid #1a3a5c;padding:10px 12px;font-size:8.5pt;line-height:1.8">'
+    + '<strong>Betalingsvoorwaarden:</strong> 60% vooraf bij orderbevestiging &bull; 40% bij levering<br>'
+    + '<strong>Productietijd:</strong> circa 90 werkdagen na ontvangst aanbetaling'
+    + '</div>'
+    + (ind ? '<div class="off-ind"><div class="off-ind-h">Indicatieprijzen &mdash; ter informatie (niet inbegrepen in totaal)</div>'
+           +   '<div class="off-ind-p">' + ind.replace(/\n/g, '<br>') + '</div></div>' : '')
+    + (opm ? '<div class="off-note">' + opm.replace(/\n/g, '<br>') + '</div>' : '')
+    + '<div class="off-ft">'
+    +   '<strong>Telju Fitness Benelux B.V.</strong> &bull; Havenkant 2, 4781AA Moerdijk &bull; info@telju.nl<br>'
+    +   'KVK: 92601855 &bull; BTW: NL866112881B01 &bull; Bank: NL45 INGB 0106 0408 71'
+    + '</div>'
+    + '</div>';
+
+  return html;
+}
+
+function renderPreview() {
+  document.getElementById('prevCard').innerHTML = buildOfferte();
+}
+
+
+// ── SHOW OFFERTE (iPhone-safe) ──
+// We replace the entire page body with the offerte + a sticky action bar.
+// The user then uses Safari's own share button (↑) to print or email.
+// For email we also show a direct mailto: <a> link the user can tap.
+// A "Terug" button restores the app.
+
+var _appHTML = ''; // saves app HTML
+
+function showOff() {
+  _appHTML = document.getElementById('app').innerHTML;
+
+  var k = {
+    naam:    document.getElementById('kN').value || '',
+    bedrijf: document.getElementById('kB').value || '',
+    email:   document.getElementById('kE').value || '',
+    nr:      document.getElementById('kR').value || '',
+    datum:   document.getElementById('kD').value || '',
+    geldig:  document.getElementById('kG').value || ''
+  };
+  var t = calcTotals();
+  var offHTML = buildOfferte();
+
+  // Build mailto body
+  var lines = [];
+  lines.push('Geachte ' + (k.naam || 'relatie') + ',');
+  lines.push('');
+  lines.push('Hierbij ontvangt u onze offerte ' + k.nr + '.');
+  lines.push('');
+  cart.forEach(function(i) {
+    lines.push(i.ref + '  ' + i.name + '  x' + i.qty + '  €' + fmt(i.price * i.qty));
+  });
+  lines.push('');
+  lines.push('Subtotaal:   €' + fmt(t.sub));
+  if (t.mk > 0)   lines.push('Maatwerk korting: -€' + fmt(t.mk));
+  if (t.vp > 0)   lines.push('Volumekorting (' + Math.round(t.vp*100) + '%): -€' + fmt(t.va));
+  lines.push('Na korting:  €' + fmt(t.nv));
+  lines.push('Transport:   €' + fmt(t.tr));
+  if (t.inst > 0) lines.push('Installatie: €' + fmt(t.inst));
+  lines.push('Excl. BTW:   €' + fmt(t.ex));
+  lines.push('BTW 21%:     €' + fmt(t.btw));
+  lines.push('TOTAAL:      €' + fmt(t.inc));
+  lines.push('');
+  lines.push('Betaling: 60% vooraf, 40% bij levering. Productietijd ca. 90 dagen.');
+  lines.push('');
+  var ind = document.getElementById('indic').value;
+  if (ind) { lines.push('Indicatieprijzen:'); lines.push(ind); lines.push(''); }
+  var opm = document.getElementById('opmk').value;
+  if (opm) { lines.push('Opmerkingen:'); lines.push(opm); lines.push(''); }
+  lines.push('Met vriendelijke groet,');
+  lines.push('Telju Fitness Benelux B.V. | info@telju.nl | +31 (0)...');
+
+  var subj = 'Offerte Telju Fitness Benelux – ' + k.nr + (k.bedrijf ? ' – ' + k.bedrijf : '');
+  var body = lines.join('\n');
+  var mailHref = 'mailto:' + k.email
+    + '?subject=' + encodeURIComponent(subj)
+    + '&cc=info%40telju.nl'
+    + '&body=' + encodeURIComponent(body);
+
+  // Replace page content
+  document.title = 'Telju Fitness Benelux B.V.';
+  document.body.innerHTML =
+    // TOP ACTION BAR
+    '<div style="background:#1a3a5c;color:#fff;padding:14px 18px;'
+    + 'display:flex;justify-content:space-between;align-items:center;'
+    + 'flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:999">'
+    +   '<span style="font-weight:700;font-size:14px">&#128424; Offerte ' + (k.nr||'') + '</span>'
+    +   '<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    // EMAIL BUTTON — real <a> link, tappable on iPhone
+    +     '<a href="' + mailHref + '" '
+    +       'style="background:#e67e22;color:#fff;padding:10px 16px;border-radius:8px;'
+    +              'font-size:14px;font-weight:700;text-decoration:none;'
+    +              'font-family:Arial,sans-serif;display:inline-block">'
+    +       '&#9993; E-mail klant'
+    +     '</a>'
+    // PRINT BUTTON — window.print() works on iPhone when page is "normal" (not overlay)
+    +     '<button onclick="window.print()" '
+    +       'style="background:#27ae60;color:#fff;border:none;padding:10px 16px;'
+    +              'border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif">'
+    +       '&#128424; PDF / Print'
+    +     '</button>'
+    +     '<button onclick="goBack()" '
+    +       'style="background:rgba(255,255,255,.2);color:#fff;border:none;padding:10px 14px;'
+    +              'border-radius:8px;font-size:14px;cursor:pointer;font-family:Arial,sans-serif">'
+    +       '&#8592; Terug'
+    +     '</button>'
+    +   '</div>'
+    // iPhone tip
+    +   '<div style="width:100%;font-size:12px;opacity:.85;margin-top:2px">'
+    +     'iPhone: gebruik de Safari deelknop &#8599; (onderin) om op te slaan als PDF of te delen'
+    +   '</div>'
+    + '</div>'
+    // OFFERTE CONTENT
+    + '<div style="max-width:800px;margin:0 auto;padding:16px">' + offHTML + '</div>';
+}
+
+function goBack() {
+  // Reload the page — simplest reliable way to restore app state on mobile
+  location.reload();
+}
+</script>
+</body>
+</html>
