@@ -45,6 +45,8 @@ button.zoom:focus-visible,.sw input:focus-visible+span,.btn:focus-visible{outlin
 .plan li{display:grid;grid-template-columns:2.2em 1fr;padding:5px 0;break-inside:avoid}
 .plan li b{color:var(--accent-soft);font-variant-numeric:tabular-nums;font-weight:600}
 @media (max-width:520px){.plan ol{columns:1}}
+.tour{display:grid;align-items:start;gap:22px 18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+.tour img{width:100%;height:auto;display:block;border-radius:4px}
 .groups{display:grid;gap:44px}
 .group{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));align-items:center}
 .group>*{min-width:0}
@@ -144,6 +146,24 @@ dialog img{border-radius:4px;cursor:zoom-out}
     </div>
   </section>
 
+  <section id="rondleiding">
+    <div class="head">
+      <span class="eyebrow">Rondleiding</span>
+      <h2>Loop met ons door de gym</h2>
+      <p class="muted">Een paar beelden vanaf de vloer, zoals jullie de gym straks zelf zien. Tik op een foto om hem groot te bekijken.</p>
+    </div>
+    <div class="tour">
+      <figure><button class="zoom" data-src="img/t-overzicht.jpg"><img loading="lazy" src="img/t-overzicht.jpg" alt="De hele hal van bovenaf" width="1600" height="900"></button><figcaption>De hele hal vanuit de hoek bij de track. De gym staat achterin bij elkaar, vooraan blijft de vloer vrij om te filmen.</figcaption></figure>
+      <figure><button class="zoom" data-src="img/t-spiegel.jpg"><img loading="lazy" src="img/t-spiegel.jpg" alt="Squat rack, Smith machine, banken en dumbbells voor de spiegelwand" width="1600" height="900"></button><figcaption>De vrije gewichten staan voor de bronzen spiegelwand: squat rack, Smith machine, dumbbells en drie banken.</figcaption></figure>
+      <figure><button class="zoom" data-src="img/t-west.jpg"><img loading="lazy" src="img/t-west.jpg" alt="Het beenblok gezien vanaf de westkant" width="1600" height="900"></button><figcaption>Het beenblok. Alles voor een beentraining staat binnen een paar meter van elkaar, met de schijvenrekken in het midden.</figcaption></figure>
+      <figure><button class="zoom" data-src="img/t-oost.jpg"><img loading="lazy" src="img/t-oost.jpg" alt="De plate loaded lijn gezien vanaf de oostkant" width="1600" height="900"></button><figcaption>De plate loaded lijn, met de 6-stack erachter. Tussen de apparaten is ruimte gelaten voor een camera en een statief.</figcaption></figure>
+      <figure><button class="zoom" data-src="img/t-hipthrust.jpg"><img loading="lazy" src="img/t-hipthrust.jpg" alt="De hip thrust machine" width="1600" height="900"></button><figcaption>De hip thrust machine. Instappen en gaan, zonder eerst een bank en een stang klaar te leggen.</figcaption></figure>
+      <figure><button class="zoom" data-src="img/t-cardio.jpg"><img loading="lazy" src="img/t-cardio.jpg" alt="Twee loopbanden en een rower" width="1600" height="900"></button><figcaption>De cardiohoek met twee loopbanden en een rower, uit de loop van de krachthoek.</figcaption></figure>
+      <figure><button class="zoom" data-src="img/t-track.jpg"><img loading="lazy" src="img/t-track.jpg" alt="De track met het logo op de wand" width="1600" height="900"></button><figcaption>De track, met jullie logo op de wand als achtergrond voor challenges.</figcaption></figure>
+      <figure><button class="zoom" data-src="img/t-logo.jpg"><img loading="lazy" src="img/t-logo.jpg" alt="Het geborduurde logo op een hoofdkussen" width="1600" height="900"></button><figcaption>Jullie logo, geborduurd op het hoofdkussen van elk apparaat.</figcaption></figure>
+    </div>
+  </section>
+
   <section id="uitgelicht">
     <div class="head">
       <span class="eyebrow">Uitgelicht</span>
@@ -155,6 +175,7 @@ dialog img{border-radius:4px;cursor:zoom-out}
         <div class="stack">
           <h3>De 6-stack, Heavy Lifters</h3>
           <p>Volledig voor jullie samengesteld: eigen kleuren en logo, maar ook de stapelgrootte en de configuratie. Zo is hij nergens anders te koop. We hebben hem zo ingedeeld dat de meeste rugoefeningen erin zitten, met een chest supported row, een cable row en een lat pulldown, allemaal op 160 kg één op één. Daarnaast een high-low pulley van 160 kg en een crossover van 2 × 80 kg. Deze lijn staat bij ons in Dordrecht, en niemand heeft hem daar uitgespeeld.</p>
+          <p>Jullie vroegen ook om een T-bar row. Die hebben we bewust niet los ingetekend, omdat de chest supported row in de 6-stack hetzelfde werk doet met een stapel van 160 kg. Je wisselt met één pin van gewicht en dat komt beter in beeld dan schijven laden. Probeer hem uit in Dordrecht, dan voelen jullie zelf het verschil.</p>
         </div>
         <button class="zoom" data-src="img/sixstack.jpg"><img loading="lazy" src="img/sixstack.jpg" alt="De 6-stack" width="1920" height="1080"></button>
       </div>
